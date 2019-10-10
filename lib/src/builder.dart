@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:path/path.dart' as p;
 
@@ -259,7 +260,15 @@ class MarkdownBuilder implements md.NodeVisitor {
     Uri uri = Uri.parse(path);
     Widget child;
     if (uri.scheme == 'http' || uri.scheme == 'https') {
-      child = new Image.network(uri.toString(), width: width, height: height);
+      if (uri.toString().contains('.svg')) {
+        child = SvgPicture.network(
+          uri.toString(),
+          width: width,
+          height: height,
+        );
+      } else {
+        child = new Image.network(uri.toString(), width: width, height: height);
+      }
     } else if (uri.scheme == 'data') {
       child = _handleDataSchemeUri(uri, width, height);
     } else if (uri.scheme == "resource") {
